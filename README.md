@@ -141,4 +141,28 @@ The Subscription Management & Churn Analytics System is designed to help organiz
 
 ## Output Screenshots
 
-![project_output](Output_Screenshots/xxxx.png)
+### Login Page
+
+![project_output](Output_Screenshots/login.png)
+
+### Dashboard Page
+
+![project_output](Output_Screenshots/dashboard.png)
+
+![project_output](Output_Screenshots/dashboard1.png)
+
+### Subscribers List
+
+![project_output](Output_Screenshots/subscribers.png)
+
+### Basic level Subscribers
+
+![project_output](Output_Screenshots/subscribers1.png)
+
+![project_output](Output_Screenshots/subscribers2.png)
+
+![project_output](Output_Screenshots/subscribers3.png)
+
+![project_output](Output_Screenshots/subscribers4.png)
+
+
