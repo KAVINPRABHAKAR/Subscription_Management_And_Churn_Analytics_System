@@ -155,14 +155,62 @@ The Subscription Management & Churn Analytics System is designed to help organiz
 
 ![project_output](Output_Screenshots/subscribers.png)
 
-### Basic level Subscribers
+### Register New Subscriber
+
+![project_output](Output_Screenshots/new_subscribe.png)
+
+![project_output](Output_Screenshots/new_subscribe1.png)
+
+### Basic Level Subscribers
 
 ![project_output](Output_Screenshots/subscribers1.png)
 
+### Professional Level Subscribers 
+
 ![project_output](Output_Screenshots/subscribers2.png)
+
+### Enterprise Level Subscribers
 
 ![project_output](Output_Screenshots/subscribers3.png)
 
+### View, Update, Delete Subscriber Options
+
 ![project_output](Output_Screenshots/subscribers4.png)
+
+### View Subscriber
+
+![project_output](Output_Screenshots/view_subscriber.png)
+
+### Update Subscriber
+
+![project_output](Output_Screenshots/update_subscriber.png)
+
+### Export Subscriber Report
+
+![project_output](Output_Screenshots/user_report.png)
+
+![project_output](Output_Screenshots/user_report_pdf.png)
+
+### Export Members List
+
+![project_output](Output_Screenshots/member_reports.png)
+
+![project_output](Output_Screenshots/member_reports1.png)
+
+### PDF Members List Report
+
+![project_output](Output_Screenshots/new_subscribe.png)
+
+### CSV Members List Report
+
+![project_output](Output_Screenshots/new_subscribe.png)
+
+### Excel Members List Report
+
+![project_output](Output_Screenshots/new_subscribe.png)
+
+
+
+
 
 
