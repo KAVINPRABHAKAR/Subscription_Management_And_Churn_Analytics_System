@@ -199,15 +199,15 @@ The Subscription Management & Churn Analytics System is designed to help organiz
 
 ### PDF Members List Report
 
-![project_output](Output_Screenshots/new_subscribe.png)
+![project_output](Output_Screenshots/pdf_members_reports.png)
 
 ### CSV Members List Report
 
-![project_output](Output_Screenshots/new_subscribe.png)
+![project_output](Output_Screenshots/csv_member_reports.png)
 
 ### Excel Members List Report
 
-![project_output](Output_Screenshots/new_subscribe.png)
+![project_output](Output_Screenshots/excel_member_reports.png)
 
 
 
