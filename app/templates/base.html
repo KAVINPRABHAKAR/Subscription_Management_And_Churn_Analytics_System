@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Management & Churn Analytics System</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --ink-black: #020617;
+            --zinc-400: #a1a1aa;
+            --zinc-500: #71717a;
+            --zinc-900: #18181b;
+            --ghost-zinc: #f8fafc;
+            --border-precision: rgba(0, 0, 0, 0.08);
+            --bg-bone: #ffffff;
+            --precision-blue: #3b82f6;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-bone);
+            color: var(--ink-black);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            background-image: radial-gradient(var(--border-precision) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        /* Surgical Top Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-precision);
+            padding: 0.85rem 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .nav-brand span {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--ink-black);
+            text-transform: uppercase;
+            letter-spacing: 0.25em; 
+        }
+
+        .nav-brand .logo-mark {
+            width: 14px;
+            height: 14px;
+            background: var(--ink-black);
+            transform: rotate(45deg); 
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--zinc-400);
+            text-decoration: none;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .nav-links a:hover {
+            color: var(--ink-black);
+        }
+
+        .btn-elite {
+            background-color: var(--ink-black);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 4px; 
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: all 0.2s;
+            border: 1px solid var(--ink-black);
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn-elite:hover {
+            background-color: transparent;
+            color: var(--ink-black);
+        }
+
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            letter-spacing: -0.02em;
+        }
+
+        .footer-terminal {
+            text-align: center;
+            padding: 40px;
+            font-size: 0.6rem;
+            color: var(--zinc-400);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 700;
+        }
+
+        @media print {
+            body { background-image: none !important; background-color: white !important; }
+            .navbar, .no-print { display: none !important; }
+            .main-container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="nav-brand">
+            <div class="logo-mark"></div>
+            <span>Churn Anlytics System</span>
+        </a>
+        
+        <div class="nav-links">
+            {% if request.cookies.get("terminal_session") == "authorized" %}
+                <a href="/" class="btn-elite">Dashboard</a>
+                <a href="/customers" class="btn-elite">Subscribers List</a>
+                <a href="/logout" class="btn-elite">Logout</a>
+                <a href="/add-customer" class="btn-elite">Add Subscription</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="main-container">
+        {% block content %}{% endblock %}
+    </main>
+
+    
+
+    <script>
+        window.onclick = function(event) {
+            // Closes all dropdowns if user clicks outside
+            if (!event.target.matches('.btn-elite') && !event.target.matches('.action-trigger')) {
+                document.querySelectorAll('.action-dropdown, #exportDropdown').forEach(d => {
+                    d.style.display = 'none';
+                });
+            }
+        }
+    </script>
+</body>
+</html>

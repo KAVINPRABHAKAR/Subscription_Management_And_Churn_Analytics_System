@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="print-only-header" style="display: none;">
+    <div style="border-bottom: 2px solid #1a1a1a; padding-bottom: 15px; margin-bottom: 30px; font-family: sans-serif;">
+        <h1 style="margin: 0; font-size: 1.8rem; color: #1a1a1a;">Subscription Management & Churn Analytics Platform</h1>
+        <h2 style="margin: 5px 0 0 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; color: #4a4a4a;">Members Reports</h2>
+        <div style="margin-top: 15px; font-family: monospace; font-size: 0.8rem; color: #666;">
+            NODE REPORT GENERATED: <span id="currentPrintDate"></span>
+        </div>
+    </div>
+</div>
+
+<div id="successToast" style="display: none; position: fixed; top: 20px; right: 20px; background: var(--ink-black); color: white; padding: 12px 20px; border-radius: 4px; border-left: 4px solid var(--precision-blue); z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: slideIn 0.3s ease-out;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="color: var(--precision-blue); font-weight: 900;">✓</span>
+        <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Node Configuration Synchronized</span>
+    </div>
+</div>
+
+<header class="no-print" style="padding: 24px 0; border-bottom: 1px solid var(--border-precision); margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <span style="color: var(--precision-blue); font-weight: 700; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em;">Registry Analytics</span>
+        <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--ink-black); margin: 4px 0 0 0; letter-spacing: -0.04em;">Subscriber Index.</h1>
+    </div>
+
+    <div style="display: flex; gap: 8px; align-items: center;">
+        <div style="position: relative; display: inline-block;">
+            <button onclick="toggleExport(event)" class="btn-elite" style="padding: 8px 16px; background: var(--ghost-zinc); color: var(--ink-black); border-color: var(--border-precision); font-size: 0.65rem;">
+                EXPORT REPORTS ⤓
+            </button>
+            <div id="exportDropdown" style="display: none; position: absolute; right: 0; top: 38px; background: white; border: 1px solid var(--ink-black); border-radius: 4px; z-index: 10001; min-width: 140px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                <a href="#" onclick="exportData('csv')" class="export-link">CSV Format</a>
+                <a href="#" onclick="exportData('excel')" class="export-link">Excel Format</a>
+                <a href="#" onclick="runProfessionalPrint()" class="export-link">PDF Report</a>
+            </div>
+        </div>
+        <a href="/add-customer" class="btn-elite" style="padding: 8px 16px; font-size: 0.65rem; text-decoration: none; background: var(--ink-black); color: white;">
+            + NEW SUBSCRIPTION 
+        </a>
+    </div>
+</header>
+
+<div class="no-print" style="display: flex; gap: 10px; margin-bottom: 24px; align-items: center;">
+    <div style="flex-grow: 1; position: relative;">
+        <input type="text" id="nodeSearch" placeholder="SEARCH BY NAME, ID, OR EMAIL..." 
+               style="width: 100%; background: var(--ghost-zinc); border: 1px solid var(--border-precision); padding: 10px 14px 10px 35px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; color: var(--ink-black); outline: none;"
+               onkeyup="filterRegistry()">
+        <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: var(--zinc-400);">⌕</span>
+    </div>
+    
+    <select id="tierFilter" onchange="filterRegistry()"
+            style="background: var(--ghost-zinc); border: 1px solid var(--border-precision); padding: 9px 12px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; color: var(--zinc-500); text-transform: uppercase; cursor: pointer;">
+        <option value="">All Tiers</option>
+        <option value="Basic">Basic</option>
+        <option value="Pro">Professional</option>
+        <option value="Enterprise">Enterprise</option>
+    </select>
+</div>
+
+<div class="data-surface" style="background: white; border: 1px solid var(--border-precision); border-radius: 4px; overflow: visible !important;">
+    <table id="customerTable" style="width: 100%; border-collapse: separate; text-align: left;">
+        <thead>
+            <tr style="border-bottom: 2px solid var(--ink-black); background: var(--ghost-zinc);">
+                <th style="padding: 12px 20px; font-size: 0.6rem; color: var(--zinc-500); text-transform: uppercase;">Subscriber Names</th>
+                <th style="padding: 12px 20px; font-size: 0.6rem; color: var(--zinc-500); text-transform: uppercase;">Subscription Types</th>
+                <th style="padding: 12px 20px; font-size: 0.6rem; color: var(--zinc-500); text-transform: uppercase;">Status</th>
+                <th style="padding: 12px 20px; font-size: 0.6rem; color: var(--zinc-500); text-transform: uppercase;">Yield (MRR)</th>
+                <th class="no-print" style="padding: 12px 20px; font-size: 0.6rem; color: var(--zinc-500); text-transform: uppercase; text-align: right;">Operations</th>
+            </tr>
+        </thead>
+
+        {% set tier_definitions = [('Basic', 'Basic Subscription'), ('Pro', 'Professional Subscription'), ('Enterprise', 'Enterprise Subscription')] %}
+        
+        {% for tier_key, tier_label in tier_definitions %}
+        <tbody class="tier-group" data-tier-type="{{ tier_key }}">
+            <tr class="tier-heading-row" style="background: #f8fafc; border-left: 4px solid var(--precision-blue);">
+                <td colspan="5" style="padding: 10px 20px; border-bottom: 1px solid var(--border-precision);">
+                    <span style="font-size: 0.65rem; font-weight: 900; color: var(--precision-blue); text-transform: uppercase; letter-spacing: 0.1em;">
+                        {{ tier_label }}
+                    </span>
+                </td>
+            </tr>
+
+            {% for customer in customers if customer.plan_type == tier_key %}
+            <tr class="customer-entry" style="border-bottom: 1px solid var(--ghost-zinc);">
+                <td style="padding: 16px 20px;">
+                    <div style="font-weight: 800; color: var(--ink-black); font-size: 0.85rem;">{{ customer.customer_name }}</div>
+                    <div class="mono" style="font-size: 0.65rem; color: var(--zinc-400);">UID_{{ 1000 + customer.id }} | {{ customer.email }}</div>
+                </td>
+                <td style="padding: 16px 20px;">
+                    <span style="font-size: 0.65rem; font-weight: 800; color: var(--ink-black); border: 1px solid var(--border-precision); padding: 3px 8px; border-radius: 2px; text-transform: uppercase;">
+                        {{ customer.plan_type }}
+                    </span>
+                </td>
+                <td style="padding: 16px 20px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="width: 6px; height: 6px; border-radius: 50%; background: {{ '#10b981' if customer.status == 'active' else '#ef4444' }};"></span>
+                        <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: {{ '#059669' if customer.status == 'active' else '#dc2626' }};">
+                            {{ customer.status }}
+                        </span>
+                    </div>
+                </td>
+                <td style="padding: 16px 20px;">
+                    <span class="mono" style="font-weight: 700; color: var(--ink-black); font-size: 0.85rem;">
+                        ${{ "{:,.2f}".format(customer.monthly_fee) }}
+                    </span>
+                </td>
+                <td class="no-print" style="padding: 16px 20px; text-align: right; position: relative;">
+                    <button onclick="toggleActionMenu(event, 'menu-{{ customer.id }}')" 
+                            style="background: transparent; border: 1px solid var(--border-precision); border-radius: 4px; color: var(--zinc-400); cursor: pointer; font-size: 1rem; padding: 4px 12px;">
+                        ⋮
+                    </button>
+                    <div id="menu-{{ customer.id }}" class="action-dropdown">
+                        <a href="/view/{{ customer.id }}">View Details</a>
+                        <a href="/edit/{{ customer.id }}" style="color: var(--precision-blue);">Edit Record</a>
+                        <form action="/delete/{{ customer.id }}" method="post" style="margin: 0;">
+                            <button type="submit" onclick="return confirm('Confirm permanent decommission?')">Delete Record</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% endfor %}
+    </table>
+</div>
+
+<style>
+/* CSS STYLES */
+@media print {
+    .no-print, #successToast, button, .action-dropdown {
+        display: none !important;
+    }
+    .print-only-header {
+        display: block !important;
+    }
+    body { background: white !important; padding: 0 !important; }
+    .data-surface { border: none !important; }
+    th:last-child, td:last-child { display: none !important; }
+    .tier-heading-row { 
+        background-color: #f8fafc !important; 
+        -webkit-print-color-adjust: exact; 
+    }
+}
+
+.export-link {
+    display: block; padding: 10px 12px; font-size: 0.6rem; font-weight: 800; 
+    text-decoration: none; color: var(--ink-black); border-bottom: 1px solid var(--border-precision); 
+    text-transform: uppercase;
+}
+.export-link:hover { background: var(--ghost-zinc); }
+
+.action-dropdown {
+    display: none; position: absolute; right: 20px; top: 45px; background: white; 
+    border: 1px solid var(--ink-black); border-radius: 4px; z-index: 9999; min-width: 160px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2); text-align: left; overflow: hidden;
+}
+
+.action-dropdown a, .action-dropdown button {
+    display: block; width: 100%; padding: 12px 16px; font-size: 0.65rem; font-weight: 800; 
+    color: var(--ink-black); text-decoration: none; border-bottom: 1px solid var(--ghost-zinc); 
+    text-transform: uppercase; background: none; border: none; cursor: pointer; text-align: left;
+}
+
+.action-dropdown a:hover, .action-dropdown button:hover { background-color: var(--ghost-zinc); }
+.action-dropdown button { color: #ef4444; border-bottom: none; }
+
+@keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+</style>
+
+<script>
+/* CORE LOGIC */
+function runProfessionalPrint() {
+    document.getElementById('currentPrintDate').innerText = new Date().toLocaleString('en-US', { 
+        dateStyle: 'full', 
+        timeStyle: 'short' 
+    });
+    window.print();
+}
+
+function toggleActionMenu(event, menuId) {
+    event.stopPropagation();
+    document.querySelectorAll('.action-dropdown').forEach(m => {
+        if (m.id !== menuId) m.style.display = 'none';
+    });
+    const menu = document.getElementById(menuId);
+    menu.style.display = (menu.style.display === 'none') ? 'block' : 'none';
+}
+
+function toggleExport(event) {
+    event.stopPropagation();
+    const drop = document.getElementById('exportDropdown');
+    drop.style.display = drop.style.display === 'none' ? 'block' : 'none';
+}
+
+window.onclick = function() {
+    document.querySelectorAll('.action-dropdown').forEach(m => m.style.display = 'none');
+    const exportDrop = document.getElementById('exportDropdown');
+    if (exportDrop) exportDrop.style.display = 'none';
+}
+
+function filterRegistry() {
+    const query = document.getElementById('nodeSearch').value.toUpperCase();
+    const activeTier = document.getElementById('tierFilter').value.toUpperCase();
+    let totalMatches = 0;
+
+    document.querySelectorAll(".tier-group").forEach(group => {
+        const groupTier = group.getAttribute('data-tier-type').toUpperCase();
+        let matchesInGroup = 0;
+        const tierMatch = (activeTier === "" || groupTier === activeTier);
+
+        group.querySelectorAll(".customer-entry").forEach(entry => {
+            const match = tierMatch && entry.innerText.toUpperCase().includes(query);
+            entry.style.display = match ? "" : "none";
+            if(match) { matchesInGroup++; totalMatches++; }
+        });
+        group.querySelector(".tier-heading-row").style.display = (matchesInGroup > 0) ? "" : "none";
+    });
+    document.getElementById('matchCount').innerText = totalMatches;
+}
+
+function exportData(type) {
+    const visibleEntries = Array.from(document.querySelectorAll(".customer-entry")).filter(e => e.style.display !== 'none');
+    const dateStr = new Date().toISOString().split('T')[0];
+    let rows = [["ID", "Customer", "Email", "Tier", "Status", "MRR"]];
+    
+    visibleEntries.forEach(row => {
+        const name = row.querySelector('div[style*="font-weight: 800"]').innerText;
+        const meta = row.querySelector('.mono').innerText.split('|');
+        rows.push([meta[0].trim(), name, meta[1].trim(), row.cells[1].innerText.trim(), row.cells[2].innerText.trim(), row.cells[3].innerText.trim()]);
+    });
+
+    if (type === 'csv') {
+        let content = rows.map(r => r.map(c => `"${c}"`).join(",")).join("\n");
+        downloadBlob(content, `Registry_${dateStr}.csv`, 'text/csv');
+    } else {
+        let html = `<html><body><table border="1">${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</table></body></html>`;
+        downloadBlob(html, `Registry_${dateStr}.xls`, 'application/vnd.ms-excel');
+    }
+}
+
+function downloadBlob(content, filename, contentType) {
+    const blob = new Blob([content], { type: contentType });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    window.URL.revokeObjectURL(url);
+}
+</script>
+{% endblock %}

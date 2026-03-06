@@ -1,0 +1,222 @@
+/* 1. Pro-Elite Design System (Ink & Bone) */
+:root {
+    --ink-black: #020617;
+    --bone-white: #ffffff;
+    --ghost-zinc: #f8fafc;
+    --precision-blue: #3b82f6;
+    --zinc-400: #a1a1aa;
+    --zinc-500: #71717a;
+    --zinc-900: #18181b;
+    --border-thin: rgba(0, 0, 0, 0.06);
+    --border-precision: rgba(0, 0, 0, 0.08);
+    --shadow-elite: 0 1px 2px rgba(0,0,0,0.05), 0 8px 16px -4px rgba(0,0,0,0.03);
+    
+    /* Functional Semantic Colors */
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+}
+
+/* 2. Global Reset & Logic */
+* {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background-color: var(--bone-white);
+    /* High-Precision Grid Pattern */
+    background-image: radial-gradient(var(--border-thin) 1px, transparent 1px);
+    background-size: 32px 32px;
+    color: var(--ink-black);
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    letter-spacing: -0.011em;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+/* 3. High-Density Container */
+.main-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 2.5rem;
+}
+
+/* 4. Compact Navbar */
+.navbar {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-thin);
+    padding: 0.75rem 10%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--ink-black);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+}
+
+.logo-mark {
+    width: 14px;
+    height: 14px;
+    background: var(--ink-black);
+    transform: rotate(45deg);
+}
+
+/* 5. Metrics & Analytics Surfaces */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+    background-color: var(--border-thin);
+    border: 1px solid var(--border-thin);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.metric-card {
+    background: var(--bone-white);
+    padding: 24px 20px;
+    transition: background 0.2s ease;
+}
+
+.metric-card:hover {
+    background: var(--ghost-zinc);
+}
+
+.metric-card h3 {
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: var(--zinc-500);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 8px 0;
+}
+
+.metric-card .value {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--ink-black);
+    letter-spacing: -0.05em;
+    line-height: 1;
+}
+
+/* 6. Data Tables & Lists */
+.data-surface {
+    background: var(--bone-white);
+    border: 1px solid var(--border-thin);
+    border-radius: 4px;
+    box-shadow: var(--shadow-elite);
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+table tr th {
+    background: var(--ghost-zinc);
+    padding: 12px 20px;
+    color: var(--zinc-500);
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border-thin);
+}
+
+table tr td {
+    padding: 14px 20px;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--border-thin);
+}
+
+table tr:last-child td {
+    border-bottom: none;
+}
+
+table tr:hover td {
+    background-color: rgba(0, 0, 0, 0.01);
+}
+
+/* 7. Components & Utilities */
+.btn-elite {
+    background: var(--ink-black);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    border: 1px solid var(--ink-black);
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-elite:hover {
+    background: transparent;
+    color: var(--ink-black);
+    transform: translateY(-1px);
+}
+
+.badge-status {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge-status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.badge-status.active { background: #f0fdf4; color: var(--success); }
+.badge-status.active::before { background: var(--success); }
+
+.badge-status.cancelled { background: #fef2f2; color: var(--danger); }
+.badge-status.cancelled::before { background: var(--danger); }
+
+.mono {
+    font-family: 'JetBrains Mono', 'Menlo', 'Cascadia Code', monospace;
+}
+
+/* 8. Print Engine */
+@media print {
+    .navbar, .btn-elite, .no-print { display: none !important; }
+    body { background: white !important; background-image: none !important; }
+    .main-container { max-width: 100%; padding: 0; }
+}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header style="padding: 24px 0; border-bottom: 1px solid var(--border-precision); margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center;">
+    <h1>Subscription Management & Churn Analytics Platform</h1>
+    <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+        <span class="mono" id="terminalClock" style="font-size: 0.7rem; font-weight: 800; color: var(--zinc-500);">00:00:00 UTC</span>
+        <span class="mono" style="display: inline-flex; align-items: center; gap: 8px; color: #10b981; font-size: 0.65rem; font-weight: 700; border: 1px solid #bbf7d0; padding: 4px 12px; border-radius: 4px; background: #f0fdf4;">
+            <span style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></span> 
+            SYSTEM: ONLINE // 12MS
+        </span>
+    </div>
+</header>
+
+{% if stats.high_risk_count > 0 %}
+<div class="data-surface" style="background: #fff1f2; border: 1px solid #fecdd3; padding: 16px 24px; border-radius: 4px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 1.2rem;">⚠️</span>
+        <p style="margin: 0; color: #b91c1c; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em;">
+            <strong class="mono">Heuristic Alert:</strong> {{ stats.high_risk_count }} Nodes showing erratic activity patterns.
+        </p>
+    </div>
+    <a href="/customers" style="font-size: 0.65rem; font-weight: 800; color: #b91c1c; text-decoration: none; border-bottom: 1px solid #b91c1c;">RESOLVE ENTITIES</a>
+</div>
+{% endif %}
+
+<div class="stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+    <div class="data-surface" style="padding: 24px; background: chocolate; border: 1px solid var(--border-precision); border-radius: 4px;">
+        <h3 style="font-size: 0.9rem; color: var(black); margin: 0 0 12px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Total Subscriptions</h3>
+        <div class="mono" style="font-size: 1.8rem; font-weight: 800; color: var(--ink-black);">{{ stats.active }}</div>
+    </div>
+    
+    <div class="data-surface" style="padding: 24px; background: salmon; border: 1px solid var(--border-precision); border-radius: 4px;">
+        <h3 style="font-size: 0.9rem; color: var(--black-400); margin: 0 0 12px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Attrition Rate</h3>
+        <div class="mono" style="font-size: 1.8rem; font-weight: 800; color: black;">{{ stats.rate }}%</div>
+    </div>
+    
+    <div class="data-surface" style="padding: 24px; background: cyan; border: 1px solid var(--border-precision); border-radius: 4px;">
+        <h3 style="font-size: 0.9rem; color: var(--black-400); margin: 0 0 12px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Monthly Revenue</h3>
+        <div class="mono" style="font-size: 1.8rem; font-weight: 800; color: var(--ink-black);">${{ "{:,.0f}".format(stats.mrr) }}</div>
+    </div>
+
+    <div class="data-surface" style="padding: 24px; background: tan; border: 1px solid var(--border-precision); border-radius: 4px;">
+        <h3 style="font-size: 0.9rem; color: var(black); margin: 0 0 12px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">Average Yield</h3>
+        <div class="mono" style="font-size: 1.8rem; font-weight: 800; color: var(--ink-black);">${{ "{:,.2f}".format(stats.arpu) }}</div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; margin-top: 32px;">
+    
+    <div class="data-surface" style="padding: 32px; background: white; border: 1px solid var(--border-precision); border-radius: 4px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px;">
+            <div>
+                <h2 style="margin: 0; font-size: 0.85rem; font-weight: 800; color: var(--ink-black); text-transform: uppercase; letter-spacing: 0.05em;">Retention Efficiency</h2>
+                <p style="color: var(black); font-size: 0.75rem; margin-top: 4px;">Sub-node survival probability analytics.</p>
+            </div>
+            <div style="text-align: right;">
+                <div class="mono" style="font-size: 2.8rem; font-weight: 800; color: var(--ink-black); line-height: 0.8;">
+                    {{ (100 - stats.rate)|round(1) }}%
+                </div>
+                <span style="font-size: 0.6rem; color: var(--precision-blue); font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em;">Global Health Index</span>
+            </div>
+        </div>
+        
+        <div style="height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden; margin-bottom: 32px;">
+            <div style="width: {{ 100 - stats.rate }}%; height: 100%; background: var(--ink-black); transition: width 1s ease-out;"></div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; padding-top: 24px; border-top: 1px solid var(--ghost-zinc);">
+            <div>
+                <h4 style="font-size: 0.55rem; font-weight: 800; text-transform: uppercase; color: var(--zinc-400); margin-bottom: 12px;">Benchmarks</h4>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem;">
+                        <span style="color: var(black);">INTERNAL_TARGET</span>
+                        <span class="mono" style="font-weight: 700;">>92.0%</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.7rem;">
+                        <span style="color: var(black);">SECTOR_AVG</span>
+                        <span class="mono" style="font-weight: 700;">88.5%</span>
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; align-items: center;">
+                <a href="/customers" class="btn-elite" style="padding: 10px 20px; font-size: 0.6rem;">REGISTRY LOGS →</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="data-surface" style="padding: 32px; background: white; border: 1px solid var(--border-precision); border-radius: 4px; display: flex; flex-direction: column; align-items: center;">
+        <h2 style="width: 100%; margin: 0 0 24px 0; font-size: 0.85rem; font-weight: 800; color: var(--ink-black); text-transform: uppercase; letter-spacing: 0.05em;">Tier Allocation</h2>
+        
+        <div class="pie-chart" style="
+            width: 140px; 
+            height: 140px; 
+            border-radius: 50%; 
+            background: conic-gradient(
+                var(--ink-black) 0% {{ stats.basic_pct }}%, 
+                var(--precision-blue) {{ stats.basic_pct }}% {{ stats.basic_pct + stats.pro_pct }}%, 
+                #e2e8f0 {{ stats.basic_pct + stats.pro_pct }}% 100%
+            );
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        ">
+            <div style="width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+                <span class="mono" style="font-size: 0.9rem; font-weight: 800;">{{ stats.active }}</span>
+                <span style="font-size: 0.5rem; color: var(--zinc-400); font-weight: 700;">TOTAL</span>
+            </div>
+        </div>
+
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="width: 8px; height: 8px; background: var(--ink-black); border-radius: 2px;"></span>
+                    <span style="font-size: 0.65rem; font-weight: 700; color: var(black);">BASIC SUBSCRIPTION</span>
+                </div>
+                <span class="mono" style="font-size: 0.65rem; font-weight: 800;">{{ stats.basic_pct }}%</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="width: 8px; height: 8px; background: var(--precision-blue); border-radius: 2px;"></span>
+                    <span style="font-size: 0.65rem; font-weight: 700; color: var(black);">PRO SUBSCRIPTION</span>
+                </div>
+                <span class="mono" style="font-size: 0.65rem; font-weight: 800;">{{ stats.pro_pct }}%</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="width: 8px; height: 8px; background: #e2e8f0; border-radius: 2px;"></span>
+                    <span style="font-size: 0.65rem; font-weight: 700; color: var(black);">ENTERPRISE SUBSCRIPTION</span>
+                </div>
+                <span class="mono" style="font-size: 0.65rem; font-weight: 800;">{{ stats.ent_pct }}%</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+@media print {
+    .navbar, .btn-elite, footer { display: none !important; }
+    body { background: white !important; }
+    .data-surface { border: 1px solid #000 !important; box-shadow: none !important; }
+}
+</style>
+
+<script>
+function updateClock() {
+    const now = new Date();
+    const time = now.toISOString().split('T')[1].split('.')[0];
+    document.getElementById('terminalClock').innerText = `${time} UTC`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+{% endblock %}

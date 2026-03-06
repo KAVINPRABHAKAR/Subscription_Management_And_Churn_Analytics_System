@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+    <div class="data-surface" style="width: 100%; max-width: 400px; padding: 40px; background: white; border: 1px solid var(--border-precision); border-radius: 4px;">
+        <div style="text-align: center; margin-bottom: 32px;">
+            <h2>Subscription Management & Churn Analytics Platform</h2>
+            <span style="color: var(--precision-blue); font-weight: 700; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.2em;">Authentication Required</span>
+            <h2 style="font-size: 1.2rem; font-weight: 800; color: var(--ink-black); margin: 8px 0 0 0;">Access Terminal.</h2>
+        </div>
+
+        {% if error %}
+        <div style="background: #fff1f2; border: 1px solid #fecdd3; color: #b91c1c; padding: 12px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; margin-bottom: 20px; text-align: center;">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form action="/login" method="post" style="display: flex; flex-direction: column; gap: 20px;">
+            <div>
+                <label style="display: block; font-size: 0.6rem; font-weight: 800; color: var(black); text-transform: uppercase; margin-bottom: 8px;">Username</label>
+                <input type="text" name="username" required 
+                       style="width: 100%; background: var(--ghost-zinc); border: 1px solid var(--border-precision); padding: 12px; border-radius: 4px; font-size: 0.8rem; outline: none; font-family: monospace;">
+            </div>
+            
+            <div>
+                <label style="display: block; font-size: 0.6rem; font-weight: 800; color: var(black); text-transform: uppercase; margin-bottom: 8px;">Password</label>
+                <input type="password" name="password" required 
+                       style="width: 100%; background: var(--ghost-zinc); border: 1px solid var(--border-precision); padding: 12px; border-radius: 4px; font-size: 0.8rem; outline: none;">
+            </div>
+
+            <button type="submit" class="btn-elite" style="width: 100%; padding: 14px; background: var(--ink-black); color: white; margin-top: 10px;">
+                Login →
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<header style="padding: 24px 0; border-bottom: 1px solid var(--border-precision); margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-end;">
+    <div>
+        <span style="color: var(--precision-blue); font-weight: 700; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.15em;">Configuration Editor</span>
+        <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--ink-black); margin: 4px 0; letter-spacing: -0.04em;">Modify Entity.</h1>
+    </div>
+    <a href="/customers" style="font-size: 0.65rem; font-weight: 800; color: var(--zinc-400); text-decoration: none; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid var(--border-precision); padding: 8px 16px; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.color='var(--ink-black)'; this.style.borderColor='var(--ink-black)'">
+        ← Return to Index
+    </a>
+</header>
+
+<div style="display: grid; grid-template-columns: 1fr 300px; gap: 32px; align-items: start;">
+    
+    <div class="data-surface" style="background: white; border: 1px solid var(--border-precision); border-radius: 4px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.02);">
+        <form action="/edit/{{ customer.id }}" method="post" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+            
+            <div style="grid-column: span 2;">
+                <label style="display: block; font-size: 0.6rem; font-weight: 800; color: var(--zinc-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Legal Entity Name</label>
+                <input type="text" name="customer_name" value="{{ customer.customer_name }}" required
+                       style="width: 100%; background: var(--ghost-zinc); border: 1px solid var(--border-precision); padding: 12px; border-radius: 4px; font-weight: 700; font-size: 0.9rem; outline: none; transition: all 0.2s;"
+                       onfocus="this.style.borderColor='var(--precision-blue)'; this.style.background='white';">
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 0.6rem; font-weight: 800; color: var(--zinc-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Primary Email Address</label>
+                <input type="email" name="email" value="{{ customer.email }}" required
+                       style="width: 100%; border: 1px solid var(--border-precision); padding: 12px; border-radius: 4px; font-weight: 700; font-size: 0.9rem; outline: none;">
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 0.6rem; font-weight: 800; color: var(--zinc-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Contact Number</label>
+                <input type="text" name="contact_phone" value="{{ customer.contact_phone or '' }}" placeholder="+1 (000) 000-0000"
+                       style="width: 100%; border: 1px solid var(--border-precision); padding: 12px; border-radius: 4px; font-weight: 700; font-size: 0.9rem; outline: none;">
+            </div>
+
+            <div style="grid-column: span 2;">
+                <label style="display: block; font-size: 0.6rem; font-weight: 800; color: var(--zinc-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Billing / Company Address</label>
+                <textarea name="company_address" rows="2" 
+                          style="width: 100%; border: 1px solid var(--border-precision); padding: 12px; border-radius: 4px; font-weight: 700; font-family: inherit; font-size: 0.9rem; outline: none; resize: none;">{{ customer.company_address or '' }}</textarea>
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 0.6rem; font-weight: 800; color: var(--zinc-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Plan Allocation</label>
+                <select name="plan_type" style="width: 100%; background: var(--ghost-zinc); border: 1px solid var(--border-precision); padding: 12px; border-radius: 4px; font-weight: 700; outline: none; cursor: pointer;">
+                    <option value="Basic" {% if customer.plan_type == 'Basic' %}selected{% endif %}>Basic ($10.00)</option>
+                    <option value="Pro" {% if customer.plan_type == 'Pro' %}selected{% endif %}>Professional ($30.00)</option>
+                    <option value="Enterprise" {% if customer.plan_type == 'Enterprise' %}selected{% endif %}>Enterprise ($100.00)</option>
+                </select>
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 0.6rem; font-weight: 800; color: var(--zinc-500); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Network Status</label>
+                <select name="status" id="statusSelect" style="width: 100%; background: var(--ghost-zinc); border: 1px solid var(--border-precision); padding: 12px; border-radius: 4px; font-weight: 700; outline: none; cursor: pointer;">
+                    <option value="active" {% if customer.status == 'active' %}selected{% endif %}>● ACTIVE</option>
+                    <option value="cancelled" {% if customer.status == 'cancelled' %}selected{% endif %}>○ CANCELLED</option>
+                </select>
+            </div>
+
+            <div style="grid-column: span 2; display: flex; gap: 12px; border-top: 1px solid var(--border-precision); padding-top: 24px; margin-top: 12px;">
+                <button type="submit" class="btn-elite" style="flex: 2; padding: 16px; justify-content: center;">
+                    COMMIT CONFIGURATION CHANGES
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <aside style="display: flex; flex-direction: column; gap: 20px;">
+        <div style="background: var(--ghost-zinc); border: 1px solid var(--border-precision); padding: 24px; border-radius: 4px;">
+            <h4 style="margin: 0 0 16px 0; font-size: 0.6rem; font-weight: 800; color: var(--zinc-500); text-transform: uppercase; letter-spacing: 0.1em;">Node Metadata</h4>
+            
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div>
+                    <span style="display: block; font-size: 0.55rem; color: var(--zinc-400); font-weight: 700; text-transform: uppercase;">Unique Identifier</span>
+                    <span class="mono" style="font-size: 0.75rem; font-weight: 700;">UID-{{ "%05d"|format(customer.id) }}</span>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 0.55rem; color: var(--zinc-400); font-weight: 700; text-transform: uppercase;">Creation Timestamp</span>
+                    <span class="mono" style="font-size: 0.75rem; font-weight: 700;">{{ customer.created_at or '2026-03-04' }}</span>
+                </div>
+                <div>
+                    <span style="display: block; font-size: 0.55rem; color: var(--zinc-400); font-weight: 700; text-transform: uppercase;">Integrity Status</span>
+                    <span style="font-size: 0.7rem; font-weight: 800; color: #10b981;">VERIFIED_NODE</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding: 16px; border: 1px dashed var(--border-precision); border-radius: 4px;">
+            <p style="margin: 0; font-size: 0.65rem; color: var(--zinc-400); line-height: 1.5;">
+                <strong>Notice:</strong> Modifying the "Network Status" will immediately impact downstream analytics and MRR reporting.
+            </p>
+        </div>
+    </aside>
+</div>
+
+<script>
+    // Visual feedback for status change
+    const statusSelect = document.getElementById('statusSelect');
+    statusSelect.addEventListener('change', function() {
+        if (this.value === 'cancelled') {
+            this.style.color = '#ef4444';
+        } else {
+            this.style.color = 'inherit';
+        }
+    });
+</script>
+{% endblock %}
