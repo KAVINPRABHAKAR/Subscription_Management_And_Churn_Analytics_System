@@ -1,6 +1,7 @@
 # Subscription Management & Churn Analytics System
 
 A web-based Subscription Management and Churn Analytics System built using FastAPI.
+
 This system allows businesses to manage customer subscriptions, track revenue metrics, and analyze churn patterns to improve customer retention.
 
 ## Project Description
